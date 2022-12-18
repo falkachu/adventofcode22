@@ -23,14 +23,13 @@ func main() {
 
 	supplystacks = append(supplystacks, line1, line2, line3, line4, line5, line6, line7, line8, line9)
 
-	log.Println(supplystacks)
+	log.Printf("Start Stack: %v", supplystacks)
 
 	lines := readInput("input.txt")
 	instructions := parseLines(lines)
 
-	log.Println(instructions)
-
-	execInstructions(supplystacks, instructions)
+	//execInstructions(supplystacks, instructions)
+	execInstructions2(supplystacks, instructions)
 }
 
 func readInput(filepath string) []string {
@@ -88,17 +87,20 @@ func execInstructions(supplystacks [][]string, instructions []Instruction) {
 		}
 	}
 
-	log.Println(supplystacks)
+	log.Printf("Task One Solution: %v", supplystacks)
 }
 
 func execInstructions2(supplystacks [][]string, instructions []Instruction) {
 	for _, inst := range instructions {
+		log.Println(supplystacks)
+
 		inst.From -= 1
 		inst.To -= 1
-		mstack := supplystacks[inst.From][(len(supplystacks[inst.From]) - 1 - inst.Move):(len(supplystacks[inst.From]) - 1)]
-		supplystacks[inst.To] = append(supplystacks[inst.To], mstack)
-		supplystacks[inst.From] = supplystacks[inst.From][:len(supplystacks[inst.From])-1]
+
+		mstacks := supplystacks[inst.From][len(supplystacks[inst.From])-inst.Move:]
+		supplystacks[inst.To] = append(supplystacks[inst.To], mstacks...)
+		supplystacks[inst.From] = supplystacks[inst.From][:len(supplystacks[inst.From])-inst.Move]
 	}
 
-	log.Println(supplystacks)
+	log.Printf("Task Two Solution: %v", supplystacks)
 }
