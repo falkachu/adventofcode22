@@ -1,33 +1,67 @@
 package main
 
 import (
-	"bufio"
+	"adventofcode/util"
 	"log"
-	"os"
 )
 
 func main() {
 	filepath := "input.txt"
-	input := readInput(filepath)
-	log.Println(input)
+	input := util.ReadLines(filepath)
+	aftern := markerAfterN(input[0])
+	log.Println(aftern)
+
+	aftern2 := markerAfterN2(input[0], 14)
+	log.Println(aftern2)
 }
 
-func readInput(filepath string) []string {
-	var items []string
+func markerAfterN(input string) int {
+	aftern := 4
 
-	file, err := os.Open(filepath)
-
-	if err != nil {
-		log.Fatal(err)
+	for i := 0; i < len(input); i++ {
+		if input[i] != input[i+1] && input[i] != input[i+2] && input[i] != input[i+3] && input[i+1] != input[i+2] && input[i+1] != input[i+3] && input[i+2] != input[i+3] {
+			log.Println(input[i : i+4])
+			break
+		} else {
+			aftern++
+		}
 	}
 
-	defer file.Close()
+	return aftern
+}
 
-	scanner := bufio.NewScanner(file)
+func markerAfterN2(input string, seqsize int) int {
+	aftern := seqsize
 
-	for scanner.Scan() {
-		items = append(items, scanner.Text())
+	for i := 0; i < len(input); i++ {
+		if areAllCharsUnique(input[i : i+seqsize]) {
+			log.Println(input[i : i+seqsize])
+			break
+		} else {
+			aftern++
+		}
 	}
 
-	return items
+	return aftern
+}
+
+// areAllCharsUnique returns true if all numbers in the input slice are unique, false otherwise
+func areAllCharsUnique(seq string) bool {
+	// Create a map to store the chars that have been seen
+	seenChars := make(map[int32]bool)
+
+	// Iterate over the chars in the slice
+	for _, char := range seq {
+		// Check if the number has already been added to the map
+		if seenChars[char] {
+			// Return false if the number has already been seen
+			return false
+		}
+
+		// Add the number to the map
+		seenChars[char] = true
+	}
+
+	// Return true if all chars are unique
+	return true
 }
