@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
@@ -21,6 +23,14 @@ func main() {
 
 	supplystacks = append(supplystacks, line1, line2, line3, line4, line5, line6, line7, line8, line9)
 
+	log.Println(supplystacks)
+
+	lines := readInput("input.txt")
+	instructions := parseLines(lines)
+
+	log.Println(instructions)
+
+	execInstructions(supplystacks, instructions)
 }
 
 func readInput(filepath string) []string {
@@ -43,18 +53,52 @@ func readInput(filepath string) []string {
 	return items
 }
 
-func splitItems(items []string) [][]string {
-	var splitems [][]string
+func parseLines(lines []string) []Instruction {
+	var instructions []Instruction
 
-	for _, i := range items {
-		var spli []string
-		strstart := i[:len(i)/2]
-		strend := i[len(i)/2:]
-		spli = append(spli, strstart)
-		spli = append(spli, strend)
-
-		splitems = append(splitems, spli)
+	for _, line := range lines {
+		insts := strings.Split(line, " ")
+		move, _ := strconv.Atoi(insts[1])
+		from, _ := strconv.Atoi(insts[3])
+		to, _ := strconv.Atoi(insts[5])
+		inst := NewInstruction(move, from, to)
+		instructions = append(instructions, inst)
 	}
 
-	return splitems
+	return instructions
+}
+
+type Instruction struct {
+	Move int
+	From int
+	To   int
+}
+
+func NewInstruction(move int, from int, to int) Instruction {
+	return Instruction{Move: move, From: from, To: to}
+}
+
+func execInstructions(supplystacks [][]string, instructions []Instruction) {
+	for _, inst := range instructions {
+		inst.From -= 1
+		inst.To -= 1
+		for m := 1; m <= inst.Move; m++ {
+			supplystacks[inst.To] = append(supplystacks[inst.To], supplystacks[inst.From][len(supplystacks[inst.From])-1])
+			supplystacks[inst.From] = supplystacks[inst.From][:len(supplystacks[inst.From])-1]
+		}
+	}
+
+	log.Println(supplystacks)
+}
+
+func execInstructions2(supplystacks [][]string, instructions []Instruction) {
+	for _, inst := range instructions {
+		inst.From -= 1
+		inst.To -= 1
+		mstack := supplystacks[inst.From][(len(supplystacks[inst.From]) - 1 - inst.Move):(len(supplystacks[inst.From]) - 1)]
+		supplystacks[inst.To] = append(supplystacks[inst.To], mstack)
+		supplystacks[inst.From] = supplystacks[inst.From][:len(supplystacks[inst.From])-1]
+	}
+
+	log.Println(supplystacks)
 }
