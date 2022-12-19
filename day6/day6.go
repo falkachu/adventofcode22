@@ -1,19 +1,8 @@
-package main
+package day6
 
 import (
-	"adventofcode/util"
 	"log"
 )
-
-func main() {
-	filepath := "input.txt"
-	input := util.ReadLines(filepath)
-	aftern := markerAfterN(input[0])
-	log.Println(aftern)
-
-	aftern2 := markerAfterN2(input[0], 14)
-	log.Println(aftern2)
-}
 
 func markerAfterN(input string) int {
 	aftern := 4
